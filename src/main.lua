@@ -1,17 +1,29 @@
 IIR = RegisterMod("Instant Item Rooms", 1);
 local mod = IIR;
 IIR.MOD_NAME = "Instant Item Rooms"
-IIR.VERSION = "1.2"
+IIR.VERSION = "1.4"
 IIR.AUTHOR = "mitko8009"
 IIR.SOCIAL = "@mitko8009_"
 
 
 local json = require("json");
 
-STARTING_ROOMS = {"None" , "Treasure", "Shop", "Secret", "Boss", "Joker", "Error"}
+STARTING_ROOMS = {"None", "Treasure", "Shop", "Secret", "Super Secret", "Boss", "Miniboss", "Sacrifice", "Curse", "Planetarium"}
 
 settings_IIR = { 
 	starting_room = "Treasure",
+}
+
+local roomTypes = {
+    ["Treasure"] = RoomType.ROOM_TREASURE,
+    ["Shop"] = RoomType.ROOM_SHOP,
+    ["Secret"] = RoomType.ROOM_SECRET,
+    ["Super Secret"] = RoomType.ROOM_SUPERSECRET,
+    ["Boss"] = RoomType.ROOM_BOSS,
+    ["Miniboss"] = RoomType.ROOM_MINIBOSS,
+    ["Sacrifice"] = RoomType.ROOM_SACRIFICE,
+    ["Curse"] = RoomType.ROOM_CURSE,
+    ["Planetarium"] = RoomType.ROOM_PLANETARIUM,
 }
 
 local function save()
@@ -31,49 +43,46 @@ local function init()
     end
 end
 
-function HasItemRoom()
-    local level = Game():GetLevel()
-    local rooms = level:GetRooms()
-
-    for i = 0, rooms.Size - 1 do
-        local roomDesc = rooms:Get(i)
-        if roomDesc and roomDesc.Data.Type == RoomType.ROOM_TREASURE then
-            return true
-        end
-    end
-
-    return false
-end
-
-
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, save)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, save)
 mod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, init)
 
-if ModConfigMenu then
+function TeleportToRoom(RoomType)
+    local level = Game():GetLevel()
+
+    local targetIdx = -1
+    for i = 0, 169 do -- Iterate through all possible room indices (0-169) to find the first matching room type
+        local roomDesc = level:GetRoomByIdx(i)
+
+        if roomDesc and roomDesc.Data and roomDesc.Data.Type == RoomType then
+            if roomDesc.GridIndex ~= -1 then
+                targetIdx = i
+                break
+            end
+        end
+    end
+
+    if targetIdx ~= -1 then
+        Isaac.GetPlayer(0):AnimateTeleport()
+
+        Game():ChangeRoom(targetIdx)
+    else
+        print("IIR: No item room found to teleport to.")
+    end
+end
+
+if ModConfigMenu then -- Check if Mod Config Menu is available before requiring it
     require("scripts.mcm");
 end
 
 function mod:onLevelStart()
-	local player = Isaac.GetPlayer(0);
-	if (
-        (Game():GetLevel():GetStage() == 1) and
-        (Game():IsGreedMode() == false) and
-        (HasItemRoom() == true)
+    local startingRoom = settings_IIR.starting_room or "Treasure"
+    local roomType = roomTypes[startingRoom] or RoomType.ROOM_TREASURE
+    if (
+        (startingRoom ~= "None") and
+        (Game():IsGreedMode() == false)
     ) then
-		if (settings_IIR.starting_room == "Treasure") then
-			player:UseCard(Card.CARD_STARS, 259) -- 100000011 UseFlag Value in Bits => 259 (USE_NOANIM, USE_NOCOSTUME, USE_NOANNOUNCER)
-		elseif (settings_IIR.starting_room == "Shop") then
-			player:UseCard(Card.CARD_HERMIT, 259)
-		elseif (settings_IIR.starting_room == "Secret") then
-			player:UseCard(Card.CARD_MOON, 259)
-        elseif (settings_IIR.starting_room == "Boss") then
-            player:UseCard(Card.CARD_EMPEROR, 259)
-        elseif (settings_IIR.starting_room == "Joker") then
-            player:UseCard(Card.CARD_JOKER, 259)
-        elseif (settings_IIR.starting_room == "Error") then
-            Isaac.ExecuteCommand("goto s.error." .. math.random(1, 32))
-		end
-	end
+        TeleportToRoom(roomType)
+    end
 end
 mod:AddCallback(ModCallbacks.MC_POST_NEW_LEVEL, mod.onLevelStart)

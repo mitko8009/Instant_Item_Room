@@ -36,20 +36,22 @@ ModConfigMenu.AddSetting(IIR.MOD_NAME, "IIR",
     Minimum = 1,
     Maximum = #STARTING_ROOMS,
     Display = function()
-        if settings_IIR.starting_room == "Boss" then
+        if (
+            (settings_IIR.starting_room == "Boss") or
+            (settings_IIR.starting_room == "Miniboss")
+        ) then
             displaytag = " (NOT RECOMMENDED)"
         else 
             displaytag = ""
         end
 
-        return "Starting Room: " .. settings_IIR.starting_room .. (settings_IIR.starting_room == "None" and " (Default)" or "") .. (settings_IIR.starting_room == "Joker" and " (Angel/Devil Room)" or "")
+        return "Starting Room: " .. settings_IIR.starting_room .. (settings_IIR.starting_room == "Treasure" and " (Default)" or "")
     end,
     OnChange = function(n)
         settings_IIR.starting_room = STARTING_ROOMS[n]
     end,
     Info = { 
-        "Choose in which room you want isaac to spawn in",
-        "The Boss room isn't recommended to use "
+        "NOTE: That room has to be present on the current floor for the teleportation to work."
     }
 });
 

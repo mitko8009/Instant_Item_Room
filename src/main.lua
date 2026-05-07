@@ -31,6 +31,20 @@ local function init()
     end
 end
 
+function HasItemRoom()
+    local level = Game():GetLevel()
+    local rooms = level:GetRooms()
+
+    for i = 0, rooms.Size - 1 do
+        local roomDesc = rooms:Get(i)
+        if roomDesc and roomDesc.Data.Type == RoomType.ROOM_TREASURE then
+            return true
+        end
+    end
+
+    return false
+end
+
 
 mod:AddCallback(ModCallbacks.MC_POST_GAME_END, save)
 mod:AddCallback(ModCallbacks.MC_PRE_GAME_EXIT, save)
@@ -44,7 +58,8 @@ function mod:onLevelStart()
 	local player = Isaac.GetPlayer(0);
 	if (
         (Game():GetLevel():GetStage() == 1) and
-        (Game():IsGreedMode() == false)
+        (Game():IsGreedMode() == false) and
+        (HasItemRoom() == true)
     ) then
 		if (settings_IIR.starting_room == "Treasure") then
 			player:UseCard(Card.CARD_STARS, 259) -- 100000011 UseFlag Value in Bits => 259 (USE_NOANIM, USE_NOCOSTUME, USE_NOANNOUNCER)

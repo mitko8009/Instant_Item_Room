@@ -12,6 +12,7 @@ STARTING_ROOMS = {"None", "Treasure", "Shop", "Secret", "Super Secret", "Boss", 
 
 settings_IIR = { 
 	starting_room = "Treasure",
+    teleport_every_floor = false,
 }
 
 local roomTypes = {
@@ -80,7 +81,8 @@ function mod:onLevelStart()
     local roomType = roomTypes[startingRoom] or RoomType.ROOM_TREASURE
     if (
         (startingRoom ~= "None") and
-        (Game():IsGreedMode() == false)
+        (Game():IsGreedMode() == false) and
+        (settings_IIR.teleport_every_floor == true or Game():GetLevel():GetStage() == 1)
     ) then
         TeleportToRoom(roomType)
     end

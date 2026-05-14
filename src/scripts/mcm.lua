@@ -29,6 +29,20 @@ ModConfigMenu.AddTitle(IIR.MOD_NAME, "IIR", "Mod Settings")
 
 ModConfigMenu.AddSetting(IIR.MOD_NAME, "IIR",
 {
+    Type = ModConfigMenu.OptionType.BOOLEAN,
+    CurrentSetting = function ()
+        return settings_IIR.teleport_every_floor
+    end,
+    Display = function ()
+        return "Teleport every floor: " .. (settings_IIR.teleport_every_floor and "ON" or "OFF") .. (settings_IIR.teleport_every_floor == false and " (Default)" or "")
+    end,
+    OnChange = function (b)
+        settings_IIR.teleport_every_floor = b
+    end
+});
+
+ModConfigMenu.AddSetting(IIR.MOD_NAME, "IIR",
+{
     Type = ModConfigMenu.OptionType.NUMBER,
     CurrentSetting = function()
         return getTableIndex(STARTING_ROOMS, settings_IIR.starting_room)

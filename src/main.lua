@@ -7,12 +7,14 @@ IIR.SOCIAL = "@mitko8009_"
 
 
 local json = require("json");
+require("scripts.mcm");
 
 STARTING_ROOMS = {"None", "Treasure", "Shop", "Secret", "Super Secret", "Boss", "Miniboss", "Sacrifice", "Curse", "Planetarium"}
 
 settings_IIR = { 
 	starting_room = "Treasure",
     teleport_every_floor = false,
+    enabled = false,
 }
 
 local roomTypes = {
@@ -72,11 +74,8 @@ function TeleportToRoom(RoomType)
     end
 end
 
-if ModConfigMenu then -- Check if Mod Config Menu is available before requiring it
-    require("scripts.mcm");
-end
-
 function mod:onLevelStart()
+    if (not settings_IIR.enabled) then return end
     local startingRoom = settings_IIR.starting_room or "Treasure"
     local roomType = roomTypes[startingRoom] or RoomType.ROOM_TREASURE
     if (

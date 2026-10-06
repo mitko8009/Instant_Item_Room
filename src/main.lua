@@ -1,7 +1,7 @@
 IIR = RegisterMod("Instant Item Rooms", 1);
 local mod = IIR;
 IIR.MOD_NAME = "Instant Item Rooms"
-IIR.VERSION = "1.4"
+IIR.VERSION = "1.5"
 IIR.AUTHOR = "mitko8009"
 IIR.SOCIAL = "@mitko8009_"
 
@@ -66,9 +66,16 @@ function TeleportToRoom(RoomType)
     end
 
     if targetIdx ~= -1 then
-        Isaac.GetPlayer(0):AnimateTeleport()
+        local player = Isaac.GetPlayer(0)
 
-        Game():ChangeRoom(targetIdx)
+        player:AnimateTeleport()
+        Game():StartRoomTransition(
+            targetIdx,
+            Direction.NO_DIRECTION,
+            RoomTransitionAnim.WALK,
+            Isaac.GetPlayer(0),
+            -1 -- dimension (-1 = current)
+        )
     else
         print("IIR: No item room found to teleport to.")
     end

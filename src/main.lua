@@ -14,7 +14,7 @@ STARTING_ROOMS = {"None", "Treasure", "Shop", "Secret", "Super Secret", "Boss", 
 settings_IIR = { 
 	starting_room = "Treasure",
     teleport_every_floor = false,
-    enabled = false,
+    enabled = true,
 }
 
 local roomTypes = {

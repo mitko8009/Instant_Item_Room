@@ -35,13 +35,13 @@ local function CreateMCMEntry()
     {
         Type = ModConfigMenu.OptionType.BOOLEAN,
         CurrentSetting = function()
-            return settings_IIR.enabled
+            return settings_IIR.mod_enabled
         end,
         Display = function()
-            return "MOD IS " .. (settings_IIR.enabled and "ENABLED" or "DISABLED")
+            return "MOD IS " .. (settings_IIR.mod_enabled and "ENABLED" or "DISABLED")
         end,
         OnChange = function(b)
-            settings_IIR.enabled = b
+            settings_IIR.mod_enabled = b
         end,
         Info = {
             "Press Enter to enable/disable the mod"

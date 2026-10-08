@@ -14,7 +14,7 @@ STARTING_ROOMS = {"None", "Treasure", "Shop", "Secret", "Super Secret", "Boss", 
 settings_IIR = { 
 	starting_room = "Treasure",
     teleport_every_floor = false,
-    enabled = true,
+    mod_enabled = true,
 }
 
 local roomTypes = {
@@ -82,7 +82,7 @@ function TeleportToRoom(RoomType)
 end
 
 function mod:onLevelStart()
-    if (not settings_IIR.enabled) then return end
+    if (not settings_IIR.mod_enabled) then return end
     local startingRoom = settings_IIR.starting_room or "Treasure"
     local roomType = roomTypes[startingRoom] or RoomType.ROOM_TREASURE
     if (
